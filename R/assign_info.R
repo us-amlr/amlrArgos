@@ -1,16 +1,25 @@
-assign_info<-function(tt.dat, tt.deployed, ITER){
-  #
-  # This ugly pile of braces, brackets, fors, ifs, and elses will assign Spp, Site, Study, etc. designations to each record in the file for which deployment information is available.
-  # tt.dat is the raw data from the ARGOS downlowd. tt.deployed is the log containing deployment information for each tag
-  #It goes row by row through the giant data set, so expect it to take awhle...
-  # 
-  # Ready
-  #
-  # Set
-  #
-  # Go
-  #
-  print("Assigning info")
+#' Import, process, and export data from Argos downloads
+#'
+#' Add specific information to the ARGOS data set produced by \code{\link{import_argos}}
+#'
+#' @param tt.dat data frame; the raw(ish) data from the ARGOS download
+#' @param tt.deployed data frame; the log containing deployment information for each tag
+#' @param iter integer; the index of the file being processed. Not used?
+#'
+#' @details
+#' This ugly pile of braces, brackets, fors, ifs, and elses will assign
+#' Spp, Site, Study, etc. designations to each record in the file
+#' for which deployment information is available.
+#' It goes row by row through the giant data set, so expect it to take awhile...
+#'
+#' Ready. Set. Go.
+#'
+#' @return
+#' A data frame more informative Argos data
+#'
+#' @export
+assign_info<-function(tt.dat, tt.deployed, iter) {
+  message("Assigning info")
   # Remove any lines of data that are missing a Date
   #
   #
@@ -24,9 +33,12 @@ assign_info<-function(tt.dat, tt.deployed, ITER){
     #
     # find out if the tag in the data has a deployment record
     if(dim(deployed.tag)[1]==0 |is.na(tt.dat$Date[i])){
-      print(paste("Tag ", tt.dat$Tag[i], " was either not found in deployment log or the date <", tt.dat$Date[i], "> associated with a particular Argos location is invalid. Values set to NA",sep=""))
-      if(dim(deployed.tag)[1]==0) print("No data")
-      if(is.na(tt.dat$Date[i])) print("Invalid date")
+      warning("Tag ", tt.dat$Tag[i], " was either not found in deployment log or the date <",
+              tt.dat$Date[i], "> associated with a particular Argos location is invalid. ",
+              "Values set to NA",
+              immediate. = TRUE)
+      if(dim(deployed.tag)[1]==0) warning("No data", immediate. = TRUE)
+      if(is.na(tt.dat$Date[i])) warning("Invalid date", immediate. = TRUE)
       out[i,1:9]<-rep(NA,9)
     } else {
       #
@@ -51,15 +63,15 @@ assign_info<-function(tt.dat, tt.deployed, ITER){
                 out[i,2]<-deployed.tag$Site[j]
                 out[i,3]<-deployed.tag$Study[j]
                 out[i,4]<-deployed.tag$Taxa[j]
-                out[i,5]<-deployed.tag$Stage[j] 
+                out[i,5]<-deployed.tag$Stage[j]
                 out[i,6]<-deployed.tag$FieldYear[j]
                 out[i,7]<-deployed.tag$Vmax[j]
-                out[i,8]<-deployed.tag$Sex[j] 
+                out[i,8]<-deployed.tag$Sex[j]
                 out[i,9]<-deployed.tag$Deploy[j]
-                
+
               }
             } else {
-              # what to do if a record is prior to the real deployment, but there are legitiate deployments later, so the record with the missing recovery should be ignored....
+              # what to do if a record is prior to the real deployment, but there are legitimate deployments later, so the record with the missing recovery should be ignored....
               tt.match<-deployed.tag$depUTC[j]!=max.deploy & tt.dat$Date[i]<deployed.tag$depUTC[j+1]
               #n.matches[j]<-tt.match
               if(tt.match){
@@ -67,14 +79,14 @@ assign_info<-function(tt.dat, tt.deployed, ITER){
                 out[i,2]<-deployed.tag$Site[j]
                 out[i,3]<-deployed.tag$Study[j]
                 out[i,4]<-deployed.tag$Taxa[j]
-                out[i,5]<-deployed.tag$Stage[j] 
+                out[i,5]<-deployed.tag$Stage[j]
                 out[i,6]<-deployed.tag$FieldYear[j]
                 out[i,7]<-deployed.tag$Vmax[j]
                 out[i,8]<-deployed.tag$Sex[j]
                 out[i,9]<-deployed.tag$Deploy[j]
               }
               # if deployment is not the correct deployment, skip to next deployment
-              #print(paste("skipping deployment ", j, " for tag ", tt.dat$Tag[i], sep="")) 
+              #print(paste("skipping deployment ", j, " for tag ", tt.dat$Tag[i], sep=""))
             }
           } else {
             # if there is no missing recovery information, ensure the record in question falls between deployment and recovery dates in the log
@@ -84,14 +96,17 @@ assign_info<-function(tt.dat, tt.deployed, ITER){
               tt.err<-tt.err+1
               if(tt.err>1){
                 # a Trap to snare potential problems in the log
-                print(paste("More than two records meet date matching criteria for Tag ", tt.dat$Tag[i], " on ", tt.dat$Date[i], ". Default to NA until confirmation.", sep=""))
+                warning("More than two records meet date matching criteria for Tag ",
+                        tt.dat$Tag[i], " on ", tt.dat$Date[i], ". ",
+                        "Default to NA until confirmation.",
+                        immediate. = TRUE)
                 out[i,1:9]<-rep(NA, 9)
               } else {
                 out[i,1]<-deployed.tag$Species[j]
                 out[i,2]<-deployed.tag$Site[j]
                 out[i,3]<-deployed.tag$Study[j]
                 out[i,4]<-deployed.tag$Taxa[j]
-                out[i,5]<-deployed.tag$Stage[j] 
+                out[i,5]<-deployed.tag$Stage[j]
                 out[i,6]<-deployed.tag$FieldYear[j]
                 out[i,7]<-deployed.tag$Vmax[j]
                 out[i,8]<-deployed.tag$Sex[j]
@@ -106,7 +121,7 @@ assign_info<-function(tt.dat, tt.deployed, ITER){
         #
         # ensure the date in the data is correctly coded - this problem occurs very infrequently, but for now requires the data be ignored
         if(is.na(tt.dat$Date[i])){
-          print("Bad Date found")
+          warning("Bad Date found", immediate. = TRUE)
           out[i,1:9]<-rep(NA,9)
         } else {
           #
@@ -122,7 +137,7 @@ assign_info<-function(tt.dat, tt.deployed, ITER){
             out[i,2]<-deployed.tag$Site
             out[i,3]<-deployed.tag$Study
             out[i,4]<-deployed.tag$Taxa
-            out[i,5]<-deployed.tag$Stage 
+            out[i,5]<-deployed.tag$Stage
             out[i,6]<-deployed.tag$FieldYear
             out[i,7]<-deployed.tag$Vmax
             out[i,8]<-deployed.tag$Sex
@@ -154,6 +169,7 @@ assign_info<-function(tt.dat, tt.deployed, ITER){
   names(out)[13]<-"Sex"
   names(out)[14]<-"Deploy"
   #print(str(out))
-  # pass the formated data back to import.argos() for exports
+
+  # pass the formatted data back to import.argos() for exports
   out
 }
