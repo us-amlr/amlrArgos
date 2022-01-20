@@ -1,6 +1,41 @@
 # argos-r
 R code used by the AERD for processing Argos data
 
+## Installation
+
+You can install the development version of amlrPinnipeds from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("us-amlr/amlrArgos")
+```
+
+## Usage
+
+The following file paths are simply examples; this code cannot be run as-is. 
+
+``` r
+library(amlrArgos)
+
+# Run for all new data, without the speed filter
+x <- import_argos(
+  UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = FALSE, 
+  argos.csv.path = "processing/input", 
+  trackdata.file = "", 
+  export.file = "ArgosData_2022_01_20_02_13_00_output.csv", 
+  log.file = "PTTlog.csv"
+)
+
+# Run for all new data, with the speed filter
+x.speed <- import_argos(
+  UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = TRUE, 
+  argos.csv.path = "processing/input", 
+  trackdata.file = "", 
+  export.file = "ArgosData_2022_01_20_02_13_00_output.csv", 
+  log.file = "PTTlog.csv"
+)
+```
+
 ## Disclaimer
 
 This repository is a scientific product and is not official
