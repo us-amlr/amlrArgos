@@ -39,7 +39,7 @@
 #' x <- import_argos(
 #'   UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = TRUE,
 #'   argos.csv.path = "processing/input",
-#'   argos.processed.file = "ArgosData_output.csv",
+#'   argos.processed.file = "ArgosData_##_output.csv",
 #'   export.file = "ArgosData_2022_01_20_02_13_00_output.csv",
 #'   log.file = "PTTlog.csv"
 #' )

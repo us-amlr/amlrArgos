@@ -34,6 +34,15 @@ x.speed <- import_argos(
   export.file = "ArgosData_2022_01_20_02_13_00_output.csv", 
   log.file = "PTTlog.csv"
 )
+
+# Run with some already-processed data
+x <- import_argos(
+  UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = TRUE,
+  argos.csv.path = "processing/input",
+  argos.processed.file = "ArgosData_##_output.csv",
+  export.file = "ArgosData_2022_01_20_02_13_00_output.csv",
+  log.file = "PTTlog.csv"
+)
 ```
 
 ## Disclaimer
