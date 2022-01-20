@@ -1,4 +1,4 @@
-# argos-r
+# amlrArgos
 R code used by the AERD for processing Argos data
 
 ## Installation
