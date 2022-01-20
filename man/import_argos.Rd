@@ -9,7 +9,7 @@ import_argos(
   FORMAT.ARGOS = TRUE,
   SPEED.FILTER = TRUE,
   argos.csv.path,
-  trackdata.file,
+  argos.processed.file,
   export.file,
   log.file,
   tz = "GMT"
@@ -29,7 +29,7 @@ will be imported and formatted}
 
 \item{argos.csv.path}{character; the path to the Argos data}
 
-\item{trackdata.file}{character; the file that contains the data to import
+\item{argos.processed.file}{character; the file that contains the data to import
 TODO clarify this}
 
 \item{export.file}{character; the file to which to export the data}

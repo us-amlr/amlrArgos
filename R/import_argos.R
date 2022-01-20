@@ -11,7 +11,7 @@
 #' @param FORMAT.ARGOS logical
 #' @param SPEED.FILTER logical
 #' @param argos.csv.path character; the path to the Argos data
-#' @param trackdata.file character; the file that contains the data to import
+#' @param argos.processed.file character; the file that contains the data to import
 #'   TODO clarify this
 #' @param export.file character; the file to which to export the data
 #' @param log.file character; the PTT log file
@@ -25,7 +25,7 @@
 #'
 #' @export
 import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
-                         argos.csv.path, trackdata.file, export.file, log.file,
+                         argos.csv.path, argos.processed.file, export.file, log.file,
                          tz = "GMT") {
   # #.
   # # function to import data from ARGOS downloads housed in the directory specified in the path call
@@ -56,7 +56,7 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
 
   # temporary solution
   directory <- argos.csv.path
-  data.path <- trackdata.file
+  data.path <- argos.processed.file
   export.path <- export.file
   log.path <- log.file
 

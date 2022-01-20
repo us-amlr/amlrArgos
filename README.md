@@ -21,7 +21,7 @@ library(amlrArgos)
 x <- import_argos(
   UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = FALSE, 
   argos.csv.path = "processing/input", 
-  trackdata.file = "", 
+  argos.processed.file = "", 
   export.file = "ArgosData_2022_01_20_02_13_00_output.csv", 
   log.file = "PTTlog.csv"
 )
@@ -30,7 +30,7 @@ x <- import_argos(
 x.speed <- import_argos(
   UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = TRUE, 
   argos.csv.path = "processing/input", 
-  trackdata.file = "", 
+  argos.processed.file = "", 
   export.file = "ArgosData_2022_01_20_02_13_00_output.csv", 
   log.file = "PTTlog.csv"
 )
