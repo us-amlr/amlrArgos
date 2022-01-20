@@ -60,8 +60,6 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   export.path <- export.file
   log.path <- log.file
 
-
-
   # import the most recent full data set if specified and ensure proper formating of time variable
   if(UPLOAD){
     last.upload<-read.table(data.path, sep=",", header=TRUE, stringsAsFactors=FALSE)
@@ -85,13 +83,13 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   } else {
     #
     #this can either be pulled as the max date from an existing dataframe or set in the code
-    message("USING USER DEFINED DATE TO INITIATE DATA UPLOAD AND FORMAT")
     last.upload.yr<-1980
     last.upload.m<-1
     last.upload.d<-1
     last.date<-ISOdate(last.upload.yr, last.upload.m, last.upload.d, tz = tz)
-    message(paste0("THE USER SPECIFIED DATE IS ", last.date,
-                   ". SET NEW DATES IF THIS DATE IS INCORRECT."))
+    message("USING USER DEFINED DATE TO INITIATE DATA UPLOAD AND FORMAT.",
+            "\nTHE USER SPECIFIED DATE IS: ", last.date, " ", tz,
+            ".\nCONTACT PACKAGE AUTHORS IF THIS DATE IS INCORRECT.\n")
   }
   #
   # figure out which files in the ARGOS directory are new
@@ -113,77 +111,100 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   dformat<-ISOdate(2016, 12, 1)
   available.files<-na.omit(tt.files[tt.available])
   n.files<-length(available.files)
-  message(paste0(n.files, " FILES AVAILABLE FOR UPLOAD BASED ON LAST UPLOAD DATE (",
-                 last.date,") PROVIDED"))
+  message(n.files, " FILE(S) AVAILABLE FOR UPLOAD BASED ON LAST UPLOAD DATE (",
+          last.date,") PROVIDED\n")
+
   if(n.files==0){
-    message("Upload terminated")
     if (UPLOAD){
       last.upload$FieldYearEnd<-as.numeric(last.upload$FieldYearEnd)
       last.upload$Vmax<-as.numeric(last.upload$Vmax)
       return(last.upload)
     }
-    stop()
+    stop("No files, upload and processing terminated")
   }
+
   if(FORMAT.ARGOS){
-    # this section will prepare the deployment log for appenidng meta data to the raw track data
-    ptt.table<-read.csv(file=log.path,header=TRUE,sep=",",stringsAsFactors=FALSE, na.strings="NA")
+    # this section will prepare the deployment log for appending meta data to the raw track data
+    ptt.table <- read.csv(file=log.path,header=TRUE,stringsAsFactors=FALSE, na.strings="NA") %>%
+      rename(Deployment_orig = Deployment) %>%
+      filter(!is.na(DeployDate)) %>%
+      mutate(DeployTime = if_else(is.na(DeployTime), "00:00:00", DeployTime),
+             depUTC = as.POSIXct(paste(DeployDate, DeployTime),
+                                 format="%m/%d/%Y %H:%M", tz = tz),
+             retUTC = as.POSIXct(paste(RetrievalDate, RetrievalTime),
+                                 format="%m/%d/%Y %H:%M", tz = tz),
+             Deployment = paste(PTT, Species, Study, Stage, Deploy, Site, FieldYear,
+                                sep = "|"))
+
+    # Check for mismatches
+    dep.mis <- ptt.table %>% filter(Deployment != Deployment_orig)
+    if (nrow(dep.mis) > 0) {
+      warning("The following 'Deployment' values appear to have been ",
+              "created incorrectly in the CSV file ",
+              "(note these are the original values in the CSV file):\n",
+              paste(dep.mis$Deployment_orig, collapse = "\n"),
+              "\n", immediate. = TRUE)
+    }
+    rm(dep.mis)
+
+    # ptt.table<-read.csv(file=log.path,header=TRUE,stringsAsFactors=FALSE, na.strings="NA")
     #
-    # provide a default deploy time for any record with a missing deployment time
-    new.time<-ifelse(is.na(ptt.table$DeployTime), "12:00:00 AM", ptt.table$DeployTime)
-    ptt.table$DeployTime<-new.time
-    #
-    # exclude any ptt records that do not have a deployment date recorded
-    exclude.missing.dates<-!is.na(ptt.table$DeployDate)
-    ptt.table<-ptt.table[exclude.missing.dates,]
-    #
-    # convert separate date and time columns to a single date format suitable for comparisons
-    depUTC<-paste(ptt.table$DeployDate,ptt.table$DeployTime,sep=" ")
-    retUTC<-paste(ptt.table$RetrievalDate,ptt.table$RetrievalTime,sep=" ")
-    #
-    # set time (UTC) using POSIX standards
-    ptt.table$depUTC<-as.POSIXct(depUTC,format="%m/%d/%Y %H:%M",tz = tz)
-    ptt.table$retUTC<-as.POSIXct(retUTC,format="%m/%d/%Y %H:%M",tz = tz)
-    #
+    # # provide a default deploy time for any record with a missing deployment time
+    # new.time<-ifelse(is.na(ptt.table$DeployTime), "12:00:00 AM", ptt.table$DeployTime)
+    # ptt.table$DeployTime<-new.time
+    # #
+    # # exclude any ptt records that do not have a deployment date recorded
+    # exclude.missing.dates<-!is.na(ptt.table$DeployDate)
+    # ptt.table<-ptt.table[exclude.missing.dates,]
+    # #
+    # # convert separate date and time columns to a single date format suitable for comparisons
+    # depUTC<-paste(ptt.table$DeployDate,ptt.table$DeployTime,sep=" ")
+    # retUTC<-paste(ptt.table$RetrievalDate,ptt.table$RetrievalTime,sep=" ")
+    # #
+    # # set time (UTC) using POSIX standards
+    # ptt.table$depUTC<-as.POSIXct(depUTC,format="%m/%d/%Y %H:%M",tz = tz)
+    # ptt.table$retUTC<-as.POSIXct(retUTC,format="%m/%d/%Y %H:%M",tz = tz)
   }
-  #
+
   # import each available file into a list - to be appended to existing data frame after all available files are imported and formatted.
   imports<-list(n.files)
   for(ii in 1:n.files){
-    message(ii)
+    # message(ii)
     #
     # import a dataset
     import.path<-paste(directory,"/", available.files[ii], sep="")
     #message(import.path)
     if(available.dates[ii]<dformat){
-      tt.data<-scan(import.path, skip=1,sep=",", nlines=0, what=list("numeric", "character", "character", "numeric","numeric", "character", "character", "character", "character"), flush=TRUE)
-      tag.data<-data.frame(Tag=as.numeric(unlist(tt.data[[1]])), Latitude=as.numeric(unlist(tt.data[[4]])), Longitude=as.numeric(unlist(tt.data[[5]])), Loc.Qual=unlist(tt.data[[8]]), Date=unlist(tt.data[[9]]))
+      tt.data<-scan(import.path, skip=1,sep=",", nlines=0,
+                    what=list("numeric", "character", "character", "numeric","numeric", "character", "character", "character", "character"), flush=TRUE)
+      tag.data<-data.frame(
+        Tag=as.numeric(unlist(tt.data[[1]])),
+        Latitude=as.numeric(unlist(tt.data[[4]])), Longitude=as.numeric(unlist(tt.data[[5]])),
+        Loc.Qual=unlist(tt.data[[8]]), Date=unlist(tt.data[[9]])
+      )
     } else {
       # ARGOS downloads after Dec 1 2016 use a new format that requires a slightly different specification of column identifiers
-      tt.data<-scan(import.path, skip=1,sep=",", nlines=0, what=list("numeric", "character", "character", "character", "character", "character", "character", "character", "character", "numeric","numeric", "character", "character", "character", "character"), flush=TRUE)
-      tag.data<-data.frame(Tag=as.numeric(unlist(tt.data[[1]])), Latitude=as.numeric(unlist(tt.data[[11]])), Longitude=as.numeric(unlist(tt.data[[10]])), Loc.Qual=unlist(tt.data[[15]]), Date=unlist(tt.data[[9]]))
+      tt.data<-scan(import.path, skip=1,sep=",", nlines=0,
+                    what=list("numeric", "character", "character", "character", "character", "character", "character", "character", "character", "numeric","numeric", "character", "character", "character", "character"), flush=TRUE)
+      tag.data<-data.frame(
+        Tag=as.numeric(unlist(tt.data[[1]])),
+        Latitude=as.numeric(unlist(tt.data[[11]])), Longitude=as.numeric(unlist(tt.data[[10]])),
+        Loc.Qual=unlist(tt.data[[15]]), Date=unlist(tt.data[[9]])
+      )
       #message(summary(tag.data))
     }
+
     #tag.data<-data.frame(Tag=as.numeric(unlist(tt.data[[1]])), Latitude=as.numeric(unlist(tt.data[[4]])), Longitude=as.numeric(unlist(tt.data[[5]])), Loc.Qual=unlist(tt.data[[8]]), Date=unlist(tt.data[[9]]))
-    if(dim(na.omit(tag.data))[1]>0){
-      #
-      # remove any records without a Date record now
-      date.missing<-tag.data$Date!=""
-      tag.data<-tag.data[date.missing,]
-      #
-      # remove any records without a Latitude record now
-      lat.missing<-tag.data$Latitude!=""
-      tag.data<-tag.data[lat.missing,]
-      # remove any records without a Longitude record now
-      long.missing<-tag.data$Longitude!=""
-      tag.data<-tag.data[long.missing,]
-      #
-      # remove NA reows
-      tag.data<-na.omit(tag.data)
-      #
-      # remove duplicated records
-      tt.pasted<-paste(tag.data[,1],tag.data[,2],tag.data[,3],tag.data[,4],tag.data[,5],sep="|")  # create a character vector with tag, lat, long,loc.quality, and time-stamp
-      tag.data<-tag.data[!duplicated(tt.pasted),]   # keep only rows that are not duplicates
-      #
+    if(dim(na.omit(tag.data))[1]>0) {
+      # remove any records without a Date, Latitude, or Longitude record
+      # remove duplicate rows
+      tag.data <- tag.data %>%
+        filter(Date != "", Latitude != "", Longitude != "") %>%
+        group_by(Tag, Latitude, Longitude, Loc.Qual, Date) %>%
+        distinct() %>%
+        ungroup()
+
+
       # Return the Date field to a time
       tag.data$Date<-as.character(tag.data$Date)
       tt.Date<-as.POSIXct(tag.data$Date,format="%Y/%m/%d %H:%M",tz = tz)
@@ -197,21 +218,35 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
       }
       tag.data$Date<-tt.Date
 
-      #
+
+      # Verbosely remove any Tag numbers not in the PTT log
+      tag.data.notag <- tag.data %>% filter(!(Tag %in% ptt.table$PTT))
+
+      if (nrow(tag.data.notag) > 0) {
+        warning(nrow(tag.data.notag), " data points for the following ",
+                "Tag number(s) from the raw Argos data file '",
+                basename(import.path),
+                "' have been removed because these tag number(s) ",
+                "are not present in the PTT log:\n",
+                paste(sort(unique(tag.data.notag$Tag)), collapse = ", "), "\n",
+                immediate. = TRUE)
+
+        tag.data <- tag.data %>% filter(Tag %in% ptt.table$PTT)
+      }
+
+
       # optionally add identifying information to each record for SPP, SITE, and STUDY (ie. Brood, Creche, Overwinter, etc, as from PTT logs using the format.argos() function
       if(FORMAT.ARGOS){
-        #
-        #
-        formated.data<-format_argos(tt=tag.data, ptt.table, iter=ii)
-        # add deployment identifier
-        deployment<-paste(formated.data$Tag, formated.data$Spp, formated.data$Study, formated.data$Stage, formated.data$Deploy, formated.data$Site, formated.data$FieldYearEnd, sep="|")
-        formated.data$Deployment<-deployment
-        #deployments<-unique(deployment)
+        # format data, and add deployment identifier
+        formated.data <- format_argos(tt=tag.data, ptt.table, iter=ii) %>%
+          mutate(Deployment = paste(Tag, Spp, Study, Stage, Deploy, Site, FieldYearEnd,
+                                    sep = "|"))
+
         # check to make sure all dates in the resulting import are OK.
         # if not, identify the file which leads to bad dates
         date.check<-as.numeric(strftime(formated.data$Date, format="%Y")) # pulls out the year
-        message(unique(date.check))
-        message(available.files[ii])
+        message("Current file:\n", available.files[ii])
+        # message("Unique dates:\n", unique(date.check))
         imports[[ii]]<-formated.data
       } else {
         #
@@ -229,9 +264,10 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   # rbind each list component
   imports<-do.call("rbind", imports)
   imports$Keep<-NA
-  message(summary(imports))
+  # message("Summary of processed data:")
+  # print(summary(imports))
   deployments <- unique(imports$Deployment)
-  message("Deployments: ", deployments)
+  message("Deployments:\n", paste(sort(deployments), collapse = "\n"))
   #
   # append imported data to existing data set
   if(UPLOAD){
@@ -246,7 +282,7 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   tt.dupes<-paste(imports[,1],imports[,2],imports[,3],imports[,5],sep="|")
   imports<-imports[!duplicated(tt.dupes),]
   # print("here")
-  write.csv(imports, export.path)
+  # write.csv(imports, export.path)
   #
   # as a last step, sort the data to be ordered by Tag and Date
   imports<-imports[order(imports$Tag, imports$Date),]

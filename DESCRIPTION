@@ -7,7 +7,9 @@ Authors@R:
 Description: What the package does (one paragraph).
 Depends: R (>= 4.0.0)
 Imports: 
-    argosfilter
+    argosfilter, 
+    dplyr, 
+    magrittr
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

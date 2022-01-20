@@ -32,7 +32,8 @@ assign_info<-function(tt.dat, tt.deployed, iter) {
     deployed.tag<-tt.deployed[tt.deployed$PTT==tt.dat$Tag[i],]
     #
     # find out if the tag in the data has a deployment record
-    if(dim(deployed.tag)[1]==0 |is.na(tt.dat$Date[i])){
+    if(dim(deployed.tag)[1]==0 | is.na(tt.dat$Date[i])){
+      # TODO
       warning("Tag ", tt.dat$Tag[i], " was either not found in deployment log or the date <",
               tt.dat$Date[i], "> associated with a particular Argos location is invalid. ",
               "Values set to NA",
