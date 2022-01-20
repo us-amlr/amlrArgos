@@ -4,15 +4,13 @@
 \alias{format_argos}
 \title{Import, process, and export data from Argos downloads}
 \usage{
-format_argos(tt, ptt.table, iter)
+format_argos(tt, ptt.table)
 }
 \arguments{
 \item{tt}{data frame; processed tag data from Argos CSV files}
 
 \item{ptt.table}{data frame;
 file specified by \code{log.file} in \code{\link{import_argos}}}
-
-\item{iter}{integer; the index of the file being processed}
 }
 \value{
 A data frame with the formatted Argos data

@@ -260,7 +260,7 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
       # optionally add identifying information to each record for SPP, SITE, and STUDY (ie. Brood, Creche, Overwinter, etc, as from PTT logs using the format.argos() function
       if(FORMAT.ARGOS){
         # format data, and add deployment identifier
-        formated.data <- format_argos(tt=tag.data, ptt.table, iter=ii) %>%
+        formated.data <- format_argos(tt=tag.data, ptt.table) %>%
           mutate(Deployment = paste(Tag, Spp, Study, Stage, Deploy, Site, FieldYearEnd,
                                     sep = "|"))
 

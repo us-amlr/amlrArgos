@@ -4,14 +4,12 @@
 \alias{assign_info}
 \title{Import, process, and export data from Argos downloads}
 \usage{
-assign_info(tt.dat, tt.deployed, iter)
+assign_info(tt.dat, tt.deployed)
 }
 \arguments{
 \item{tt.dat}{data frame; the raw(ish) data from the ARGOS download}
 
 \item{tt.deployed}{data frame; the log containing deployment information for each tag}
-
-\item{iter}{integer; the index of the file being processed. Not used?}
 }
 \value{
 A data frame more informative Argos data

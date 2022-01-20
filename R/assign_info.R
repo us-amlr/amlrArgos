@@ -4,7 +4,6 @@
 #'
 #' @param tt.dat data frame; the raw(ish) data from the ARGOS download
 #' @param tt.deployed data frame; the log containing deployment information for each tag
-#' @param iter integer; the index of the file being processed. Not used?
 #'
 #' @details
 #' This ugly pile of braces, brackets, fors, ifs, and elses will assign
@@ -18,7 +17,7 @@
 #' A data frame more informative Argos data
 #'
 #' @export
-assign_info<-function(tt.dat, tt.deployed, iter) {
+assign_info<-function(tt.dat, tt.deployed) {
   message("Assigning info")
   # Remove any lines of data that are missing a Date
   #
