@@ -25,5 +25,9 @@ This function uses the R package \code{argosfilter} to filter the speeds for eac
 \code{\link[argosfilter]{sdafilter}} removes Z codes and keeps all other positions that meet a
 threshold speed criteria set in the function call,
 but note that it requires 5 or more points to run.
-Tracks with fewer than five points will be set to NA
+Tracks with fewer than five points will be set to NA.
+
+Note that this function will mark points as 'to remove' if
+\code{\link[argosfilter]{sdafilter}} returns 'end_location'.
+See the Value section of \code{\link[argosfilter]{sdafilter}} for more details.
 }
