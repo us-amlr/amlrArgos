@@ -47,3 +47,26 @@ Import, process, and export data from Argos downloads
 \details{
 todo
 }
+\examples{
+
+\dontrun{
+# Run for all new data
+x <- import_argos(
+  UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = TRUE,
+  argos.csv.path = "processing/input",
+  argos.processed.file = "",
+  export.file = "ArgosData_2022_01_20_02_13_00_output.csv",
+  log.file = "PTTlog.csv"
+)
+
+# Run with already-processed data
+x <- import_argos(
+  UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = TRUE,
+  argos.csv.path = "processing/input",
+  argos.processed.file = "ArgosData_output.csv",
+  export.file = "ArgosData_2022_01_20_02_13_00_output.csv",
+  log.file = "PTTlog.csv"
+)
+}
+
+}
