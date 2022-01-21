@@ -148,18 +148,20 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   if(FORMAT.ARGOS){
     # this section will prepare the deployment log for appending meta data to the raw track data
     ptt.table <- read.csv(file=log.path,header=TRUE,stringsAsFactors=FALSE, na.strings="NA") %>%
-      rename(Deployment_orig = Deployment) %>%
-      filter(!is.na(DeployDate)) %>%
-      mutate(DeployTime = if_else(is.na(DeployTime), "00:00:00", DeployTime),
-             depUTC = as.POSIXct(paste(DeployDate, DeployTime),
+      rename(Deployment_orig = .data$Deployment) %>%
+      filter(!is.na(.data$DeployDate)) %>%
+      mutate(DeployTime = if_else(is.na(.data$DeployTime),
+                                  "00:00:00", .data$DeployTime),
+             depUTC = as.POSIXct(paste(.data$DeployDate, .data$DeployTime),
                                  format="%m/%d/%Y %H:%M", tz = tz),
-             retUTC = as.POSIXct(paste(RetrievalDate, RetrievalTime),
+             retUTC = as.POSIXct(paste(.data$RetrievalDate, .data$RetrievalTime),
                                  format="%m/%d/%Y %H:%M", tz = tz),
-             Deployment = paste(PTT, Species, Study, Stage, Deploy, Site, FieldYear,
+             Deployment = paste(.data$PTT, .data$Species, .data$Study, .data$Stage,
+                                .data$Deploy, .data$Site, .data$FieldYear,
                                 sep = "|"))
 
     # Check for mismatches
-    dep.mis <- ptt.table %>% filter(Deployment != Deployment_orig)
+    dep.mis <- ptt.table %>% filter(.data$Deployment != .data$Deployment_orig)
     if (nrow(dep.mis) > 0) {
       warning("The following 'Deployment' values appear to have been ",
               "created incorrectly in the CSV file ",
@@ -221,8 +223,9 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
       # remove any records without a Date, Latitude, or Longitude record
       # remove duplicate rows
       tag.data <- tag.data %>%
-        filter(Date != "", Latitude != "", Longitude != "") %>%
-        group_by(Tag, Latitude, Longitude, Loc.Qual, Date) %>%
+        filter(.data$Date != "", .data$Latitude != "", .data$Longitude != "") %>%
+        group_by(.data$Tag, .data$Latitude, .data$Longitude, .data$Loc.Qual,
+                 .data$Date) %>%
         distinct() %>%
         ungroup()
 
@@ -242,7 +245,7 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
 
 
       # Verbosely remove any Tag numbers not in the PTT log
-      tag.data.notag <- tag.data %>% filter(!(Tag %in% ptt.table$PTT))
+      tag.data.notag <- tag.data %>% filter(!(.data$Tag %in% ptt.table$PTT))
 
       if (nrow(tag.data.notag) > 0) {
         warning(nrow(tag.data.notag), " data points for the following ",
@@ -253,7 +256,7 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
                 paste(sort(unique(tag.data.notag$Tag)), collapse = ", "), "\n",
                 immediate. = TRUE)
 
-        tag.data <- tag.data %>% filter(Tag %in% ptt.table$PTT)
+        tag.data <- tag.data %>% filter(.data$Tag %in% ptt.table$PTT)
       }
 
 
@@ -261,7 +264,8 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
       if(FORMAT.ARGOS){
         # format data, and add deployment identifier
         formated.data <- format_argos(tt=tag.data, ptt.table) %>%
-          mutate(Deployment = paste(Tag, Spp, Study, Stage, Deploy, Site, FieldYearEnd,
+          mutate(Deployment = paste(.data$Tag, .data$Spp, .data$Study, .data$Stage,
+                                    .data$Deploy, .data$Site, .data$FieldYearEnd,
                                     sep = "|"))
 
         # check to make sure all dates in the resulting import are OK.

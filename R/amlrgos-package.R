@@ -2,8 +2,8 @@
 #'
 #' Process Argos data for the SWFSC/AERD
 #'
-#' @name amlrArgos-package
-#' @aliases amlrArgos
+#' @name amlrgos-package
+#' @aliases amlrgos
 #' @docType package
 #' @title todo
 #' @author Sam Woodman \email{sam.woodman@@noaa.gov}
@@ -11,6 +11,7 @@
 #'
 #' @importFrom dplyr distinct filter group_by if_else mutate rename ungroup
 #' @importFrom magrittr %>%
+#' @importFrom rlang .data
 #' @importFrom stats na.omit
 #' @importFrom utils read.csv read.table write.csv
 #'

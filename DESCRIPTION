@@ -1,4 +1,4 @@
-Package: amlrArgos
+Package: amlrgos
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
@@ -9,7 +9,8 @@ Depends: R (>= 4.0.0)
 Imports: 
     argosfilter, 
     dplyr, 
-    magrittr
+    magrittr, 
+    rlang
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

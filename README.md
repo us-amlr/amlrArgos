@@ -1,13 +1,13 @@
-# amlrArgos
+# amlrgos
 R code used by the AERD for processing Argos data
 
 ## Installation
 
-You can install the development version of amlrPinnipeds from [GitHub](https://github.com/) with:
+You can install the development version of amlrgos from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("us-amlr/amlrArgos")
+devtools::install_github("us-amlr/amlrgos")
 ```
 
 ## Usage
@@ -15,7 +15,7 @@ devtools::install_github("us-amlr/amlrArgos")
 The following file paths are simply examples; this code cannot be run as-is. 
 
 ``` r
-library(amlrArgos)
+library(amlrgos)
 
 # Run for all new data, without the speed filter
 x <- import_argos(
