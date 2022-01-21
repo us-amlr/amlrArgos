@@ -3,8 +3,8 @@ Title: Processing AERD Argos Data
 Version: 0.1.0
 Authors@R: 
     c(person("Sam", "Woodman", email = "sam.woodman@noaa.gov", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-6071-8186")), 
-      person("Jefferson", "Hinke", email = "sam.woodman@noaa.gov", role = c("aut"), comment = c(ORCID = "0000-0001-6071-8186")))
-Description: Process Argos data using AERD conventions nd practices.
+      person("Jefferson", "Hinke", email = "jefferson.hinke@noaa.gov", role = c("aut"), comment = c(ORCID = "0000-0002-3600-1414")))
+Description: Process Argos data using AERD conventions and practices.
 Depends: R (>= 4.0.0)
 Imports: 
     argosfilter, 
