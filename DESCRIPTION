@@ -1,17 +1,17 @@
 Package: amlrgos
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Processing AERD Argos Data
+Version: 0.1.0
 Authors@R: 
     c(person("Sam", "Woodman", email = "sam.woodman@noaa.gov", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-6071-8186")), 
       person("Jefferson", "Hinke", email = "sam.woodman@noaa.gov", role = c("aut"), comment = c(ORCID = "0000-0001-6071-8186")))
-Description: What the package does (one paragraph).
+Description: Process Argos data using AERD conventions nd practices.
 Depends: R (>= 4.0.0)
 Imports: 
     argosfilter, 
     dplyr, 
     magrittr, 
     rlang
-License: GPL (>= 3)
+License: CC0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2

@@ -3,7 +3,7 @@ R code used by the AERD for processing Argos data
 
 ## Installation
 
-You can install the development version of amlrgos from [GitHub](https://github.com/) with:
+You can install amlrgos from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
