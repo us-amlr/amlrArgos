@@ -311,7 +311,7 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   # write.csv(imports, export.path)
   #
   # as a last step, sort the data to be ordered by Tag and Date
-  imports<-imports[order(imports$Tag, imports$Date),]
+  imports <- imports %>% arrange(.data$Tag, .data$Date)
   #
   if(SPEED.FILTER){
     # require(argosfilter)
@@ -333,7 +333,7 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
     }
   }
 
-  imports<-imports[order(imports$Tag, imports$Date),]
+  imports <- imports %>% arrange(.data$Tag, .data$Date)
   #
   # export the new dataset for use later- this will over write any existing data inthe data.path
   write.csv(imports, export.path)
