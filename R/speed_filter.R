@@ -22,7 +22,7 @@
 #' A data frame without the filtered Argos data
 #'
 #' @export
-speed_filter<-function(tag.data, ptt.table, deployments){
+speed_filter <- function(tag.data, ptt.table, deployments) {
   # library(argosfilter)
   #
   #

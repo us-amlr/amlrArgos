@@ -16,21 +16,23 @@ import_argos(
 )
 }
 \arguments{
-\item{UPLOAD}{logical; if TRUE, then an existing, formatted file
-housed at the path specified (line 13) is already available.
-Only the newest files will be appended to the existing data set.
-If FALSE, the analyst must specify a date (lines 43-46, below) and all
-downloads from the ARGOS server that occurred after the specified date
-will be imported and formatted}
+\item{UPLOAD}{logical; if TRUE, then an existing, formatted file housed at
+the path specified by \code{argos.processed.file} is already available.
+Only the newest files will be appended to this existing data set.
+If FALSE, all downloads from the ARGOS server that occurred after
+1 Jan 1980 will be imported and formatted.
+Please contact the package maintainer if this date needs to be changed}
 
-\item{FORMAT.ARGOS}{logical}
+\item{FORMAT.ARGOS}{logical, default is \code{TRUE}
+see \code{\link{format_argos}} for more details}
 
-\item{SPEED.FILTER}{logical}
+\item{SPEED.FILTER}{logical, default is \code{TRUE}.
+see \code{\link{speed_filter}} for more details}
 
 \item{argos.csv.path}{character; the path to the Argos data}
 
-\item{argos.processed.file}{character; the file that contains the data to import
-TODO clarify this}
+\item{argos.processed.file}{character; the file that contains the already-
+processed data to be appended to the newly processed data}
 
 \item{export.file}{character; the file to which to export the data}
 

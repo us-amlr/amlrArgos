@@ -20,8 +20,8 @@ Add specific information to the ARGOS data set produced by \code{\link{import_ar
 }
 \details{
 This will only append information to records in the individual files
-that are newly imported by import_argos
-(i.e. not any data already imported or stored locally).
-This function pulls out the deployment data for the tags that are in the tag data,
+that are newly imported by \code{\link{import_argos}}, i.e. data from
+\code{argos.csv.path} and not from \code{argos.processed.file}.
+This function extracts the deployment data for the tags that are in the tag data,
 and passes everything to \code{\link{assign_info}}.
 }

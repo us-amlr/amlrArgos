@@ -2,17 +2,19 @@
 #'
 #' Import, process, and export data from Argos downloads
 #'
-#' @param UPLOAD logical; if TRUE, then an existing, formatted file
-#'   housed at the path specified (line 13) is already available.
-#'   Only the newest files will be appended to the existing data set.
-#'   If FALSE, the analyst must specify a date (lines 43-46, below) and all
-#'   downloads from the ARGOS server that occurred after the specified date
-#'   will be imported and formatted
-#' @param FORMAT.ARGOS logical
-#' @param SPEED.FILTER logical
+#' @param UPLOAD logical; if TRUE, then an existing, formatted file housed at
+#'   the path specified by \code{argos.processed.file} is already available.
+#'   Only the newest files will be appended to this existing data set.
+#'   If FALSE, all downloads from the ARGOS server that occurred after
+#'   1 Jan 1980 will be imported and formatted.
+#'   Please contact the package maintainer if this date needs to be changed
+#' @param FORMAT.ARGOS logical, default is \code{TRUE}
+#'   see \code{\link{format_argos}} for more details
+#' @param SPEED.FILTER logical, default is \code{TRUE}.
+#'   see \code{\link{speed_filter}} for more details
 #' @param argos.csv.path character; the path to the Argos data
-#' @param argos.processed.file character; the file that contains the data to import
-#'   TODO clarify this
+#' @param argos.processed.file character; the file that contains the already-
+#'   processed data to be appended to the newly processed data
 #' @param export.file character; the file to which to export the data
 #' @param log.file character; the PTT log file
 #' @param tz character; time zone to pass to datetime functions. Default is 'GMT'
@@ -49,31 +51,10 @@
 import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
                          argos.csv.path, argos.processed.file, export.file, log.file,
                          tz = "GMT") {
-  # #.
   # # function to import data from ARGOS downloads housed in the directory specified in the path call
   # # if UPLOAD is TRUE, then an existing, formated file housed at the path specified (line 13) is already available. Only the newest files will be appendeded to the existing data set.
   # # if UPLOAD is FALSE, the analyst must specify a date (lines 43-46, below) and all downloads from the ARGOS server that occurred after the specified date will be imported and formatted
   # # The final full data set will be exported to a local directory specified below (Line).
-  # #
-  # #
-  # # set the path to the ARGOS data
-  # directory<-"//superba/Overwinter_foraging/Argos_csv"
-  # #directory<-"c:/users/jefferson.hinke/desktop/argos/data/hope bay/Argos_csv"
-  # #
-  # # set the path for where the data to import is housed
-  # data.path<-"c:/users/jefferson.hinke/desktop/argos/trackdata.csv"
-  # print(data.path)
-  # #data.path<-"c:/users/jefferson.hinke/desktop/argos/data/hope bay/hopebaydata.csv"
-  #
-  # #
-  # #set the path for exporting the final data
-  # export.path<-"c:/users/jefferson.hinke/desktop/argos/trackdata_updated.csv"
-  # #export.path<-"c:/users/jefferson.hinke/desktop/argos/data/hope bay/hopebaydata.csv"
-  #
-  # #
-  # # set the path to where the PTT log and deployment information is housed.
-  # log.path<-"c:/users/jefferson.hinke/desktop/argos/PTTlog.csv"
-  # #log.path<-"c:/users/jefferson.hinke/desktop/argos/data/hope bay/PTTlog_HopeBay.csv"
 
 
   # temporary solution
@@ -109,7 +90,7 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
     last.upload.m<-1
     last.upload.d<-1
     last.date<-ISOdate(last.upload.yr, last.upload.m, last.upload.d, tz = tz)
-    message("USING USER DEFINED DATE TO INITIATE DATA UPLOAD AND FORMAT.",
+    message("USING PACKAGE-DEFINED DATE TO INITIATE DATA UPLOAD AND FORMAT.",
             "\nTHE USER SPECIFIED DATE IS: ", last.date, " ", tz,
             ".\nCONTACT PACKAGE AUTHORS IF THIS DATE IS INCORRECT.\n")
   }
@@ -148,7 +129,7 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   if(FORMAT.ARGOS){
     # this section will prepare the deployment log for appending meta data to the raw track data
     ptt.table <- read.csv(file=log.path,header=TRUE,stringsAsFactors=FALSE, na.strings="NA") %>%
-      rename(Deployment_orig = .data$Deployment) %>%
+      # rename(Deployment_orig = .data$Deployment) %>%
       filter(!is.na(.data$DeployDate)) %>%
       mutate(DeployTime = if_else(is.na(.data$DeployTime),
                                   "00:00:00", .data$DeployTime),
@@ -160,16 +141,17 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
                                 .data$Deploy, .data$Site, .data$FieldYear,
                                 sep = "|"))
 
-    # Check for mismatches
-    dep.mis <- ptt.table %>% filter(.data$Deployment != .data$Deployment_orig)
-    if (nrow(dep.mis) > 0) {
-      warning("The following 'Deployment' values appear to have been ",
-              "created incorrectly in the CSV file ",
-              "(note these are the original values in the CSV file):\n",
-              paste(dep.mis$Deployment_orig, collapse = "\n"),
-              "\n", immediate. = TRUE)
-    }
-    rm(dep.mis)
+    # # Check for mismatches in user- and code-made Deployment strings
+    # dep.mis <- ptt.table %>% filter(.data$Deployment != .data$Deployment_orig)
+    # if (nrow(dep.mis) > 0) {
+    #   warning("The following 'Deployment' values appear to have been ",
+    #           "created incorrectly in the CSV file ",
+    #           "(note these are the original values in the CSV file):\n",
+    #           paste(dep.mis$Deployment_orig, collapse = "\n"),
+    #           "\n", immediate. = TRUE)
+    # }
+    # rm(dep.mis)
+
 
     # ptt.table<-read.csv(file=log.path,header=TRUE,stringsAsFactors=FALSE, na.strings="NA")
     #

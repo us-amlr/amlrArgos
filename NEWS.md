@@ -1,3 +1,10 @@
+# amlrgos 0.1.2
+
+* The 'Deployment' column from the PTT log is now ignored; this string is calculated in `import_argos`
+
+* Documentation updates
+
+
 # amlrgos 0.1.1
 
 * Use `dplyr::arrange` for sorting for consistent row names

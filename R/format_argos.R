@@ -8,20 +8,20 @@
 #'
 #' @details
 #' This will only append information to records in the individual files
-#' that are newly imported by import_argos
-#' (i.e. not any data already imported or stored locally).
-#' This function pulls out the deployment data for the tags that are in the tag data,
+#' that are newly imported by \code{\link{import_argos}}, i.e. data from
+#' \code{argos.csv.path} and not from \code{argos.processed.file}.
+#' This function extracts the deployment data for the tags that are in the tag data,
 #' and passes everything to \code{\link{assign_info}}.
 #'
 #' @return
 #' A data frame with the formatted Argos data
 #'
 #' @export
-format_argos<-function(tt, ptt.table){
-  deployed<-ptt.table[!is.na(match(ptt.table$PTT, unique(tt$Tag))),]
+format_argos <- function(tt, ptt.table) {
+  deployed <- ptt.table[!is.na(match(ptt.table$PTT, unique(tt$Tag))), ]
 
   # run the code to process the data
-  new.out<-assign_info(tt.dat=tt, tt.deployed=deployed)
+  new.out <- assign_info(tt.dat=tt, tt.deployed=deployed)
 
   new.out
 }

@@ -12,7 +12,7 @@ assign_info(tt.dat, tt.deployed)
 \item{tt.deployed}{data frame; the log containing deployment information for each tag}
 }
 \value{
-A data frame more informative Argos data
+A data frame with more informative Argos data
 }
 \description{
 Add specific information to the ARGOS data set produced by \code{\link{import_argos}}
@@ -21,7 +21,8 @@ Add specific information to the ARGOS data set produced by \code{\link{import_ar
 This ugly pile of braces, brackets, fors, ifs, and elses will assign
 Spp, Site, Study, etc. designations to each record in the file
 for which deployment information is available.
-It goes row by row through the giant data set, so expect it to take awhile...
+It goes row by row through the giant data set, so expect it to take awhile
+when processing lots of data
 
 Ready. Set. Go.
 }

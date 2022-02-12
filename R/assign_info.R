@@ -9,15 +9,16 @@
 #' This ugly pile of braces, brackets, fors, ifs, and elses will assign
 #' Spp, Site, Study, etc. designations to each record in the file
 #' for which deployment information is available.
-#' It goes row by row through the giant data set, so expect it to take awhile...
+#' It goes row by row through the giant data set, so expect it to take awhile
+#' when processing lots of data
 #'
 #' Ready. Set. Go.
 #'
 #' @return
-#' A data frame more informative Argos data
+#' A data frame with more informative Argos data
 #'
 #' @export
-assign_info<-function(tt.dat, tt.deployed) {
+assign_info <- function(tt.dat, tt.deployed) {
   message("Assigning info")
   # Remove any lines of data that are missing a Date
   #
