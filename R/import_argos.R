@@ -56,6 +56,18 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   # # if UPLOAD is FALSE, the analyst must specify a date (lines 43-46, below) and all downloads from the ARGOS server that occurred after the specified date will be imported and formatted
   # # The final full data set will be exported to a local directory specified below (Line).
 
+  # Non-comprehensive error checking
+  if (UPLOAD & !file.exists(argos.processed.file))
+    stop("If UPLOAD is TRUE, then argos.processed.file must be ",
+         "a valid path to a CSV file")
+
+  if (length(list.files(argos.csv.path)) == 0)
+    stop("There must be at least one CSV file at the path specified by argos.csv.path")
+
+  if (!file.exists(log.file))
+    stop("log.file must be a valid path to a CSV file")
+
+
 
   # temporary solution
   directory <- argos.csv.path
