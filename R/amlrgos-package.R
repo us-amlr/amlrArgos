@@ -5,7 +5,7 @@
 #' @name amlrgos-package
 #' @aliases amlrgos
 #' @docType package
-#' @title todo
+#' @title Processing AERD Argos Data
 #' @author Sam Woodman \email{sam.woodman@@noaa.gov}
 #' @author Jefferson Hinke \email{jefferson.hinke@@noaa.gov}
 #'
