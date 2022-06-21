@@ -4,7 +4,7 @@
 \name{amlrgos-package}
 \alias{amlrgos-package}
 \alias{amlrgos}
-\title{todo}
+\title{Processing AERD Argos Data}
 \description{
 Process Argos data for the SWFSC/AERD
 }
