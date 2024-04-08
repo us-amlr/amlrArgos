@@ -29,7 +29,7 @@
 #'
 #' \dontrun{
 #' # Run for all new data
-#' x <- import_argos(
+#' import_argos(
 #'   UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = TRUE,
 #'   argos.csv.path = "processing/input",
 #'   argos.processed.file = "",
@@ -38,7 +38,7 @@
 #' )
 #'
 #' # Run with already-processed data
-#' x <- import_argos(
+#' import_argos(
 #'   UPLOAD = FALSE, FORMAT.ARGOS = TRUE, SPEED.FILTER = TRUE,
 #'   argos.csv.path = "processing/input",
 #'   argos.processed.file = "ArgosData_##_output.csv",
@@ -339,8 +339,3 @@ import_argos <- function(UPLOAD=FALSE, FORMAT.ARGOS=TRUE, SPEED.FILTER=TRUE,
   imports
   # end of file
 }
-
-
-
-
-
